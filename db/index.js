@@ -1,8 +1,7 @@
 const mongoose = require('mongoose')
 require('dotenv').config()
 
-const db = mongoose
-  .connect(process.env.CONNECTION_STRING, {
+const connection = mongoose.connect(process.env.CONNECTION_STRING, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -11,4 +10,4 @@ const db = mongoose
 /**
  * db here is a promise, so exporting that
  */
-module.exports = db
+module.exports = connection
