@@ -22,14 +22,21 @@ function AppNavigation(props: AppNavigationProps) {
       component={"nav"}
       variant="outlined"
       sx={{
-        width: expanded ? "200px" : "56px",
+        width: { xs: "100%", sm: expanded ? "200px" : "56px" },
+        position: { xs: "absolute", sm: "initial" },
+        bottom: 0,
         boxSizing: "border-box",
-        borderTop: 0,
-        transition: '125ms ease-in all'
+        borderTop: { sm: 0 },
+        transition: "125ms ease-in all",
       }}
     >
       <Stack justifyContent={"center"}>
-        <List>
+        <List
+          sx={{
+            flexDirection: { xs: "row", sm: "column" },
+            padding: { xs: 0, sm: "initial" },
+          }}
+        >
           {routes?.map((route) => {
             return (
               <NavLink
@@ -38,23 +45,32 @@ function AppNavigation(props: AppNavigationProps) {
                 key={route.path}
               >
                 {({ isActive }) => (
-                  <ListItem sx={{ height: "56px" }}>
+                  <ListItem
+                    sx={{
+                      height: "56px",
+                      width: { xs: "56px", sm: "initial" },
+                    }}
+                  >
                     <ListItemButton
-                      sx={{ overflow: "hidden" }}
+                      sx={{ overflow: "hidden", justifyContent: "center" }}
                       selected={isActive}
                       color={isActive ? "primary" : "neutral"}
                     >
-                      <ListItemDecorator>{route.icon}</ListItemDecorator>
-                      {
-                        <ListItemContent>
-                          <Typography
-                            textTransform="capitalize"
-                            color={isActive ? "primary" : "neutral"}
-                          >
-                            {route.name}
-                          </Typography>
-                        </ListItemContent>
-                      }
+                      {expanded ? (
+                        <>
+                          <ListItemDecorator>{route.icon}</ListItemDecorator>
+                          <ListItemContent>
+                            <Typography
+                              textTransform="capitalize"
+                              color={isActive ? "primary" : "neutral"}
+                            >
+                              {route.name}
+                            </Typography>
+                          </ListItemContent>
+                        </>
+                      ) : (
+                        <>{route.icon}</>
+                      )}
                     </ListItemButton>
                   </ListItem>
                 )}

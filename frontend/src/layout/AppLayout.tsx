@@ -1,12 +1,15 @@
 import { Outlet } from "react-router-dom";
 import AppNavigation from "../components/navigation/AppNavigation";
 import AppHeader from "../components/header/AppHeader";
-import { Avatar, IconButton, Stack, Typography } from "@mui/joy";
+import { Avatar, Container, IconButton, Stack, Typography } from "@mui/joy";
 import { Toaster } from "sonner";
 import { NavigationRoute } from "../interfaces/NavigationRoute";
 import {
+  ArrowTrendingUpIcon,
   BanknotesIcon,
   Bars2Icon,
+  CurrencyRupeeIcon,
+  ListBulletIcon,
   WalletIcon,
 } from "@heroicons/react/20/solid";
 import { useState } from "react";
@@ -18,14 +21,29 @@ const navigationRoutes: NavigationRoute[] = [
     icon: <BanknotesIcon height={20} />,
   },
   {
-    name: "wallet",
-    path: "wallet",
+    name: "analysis",
+    path: "analysis",
+    icon: <ArrowTrendingUpIcon height={20} />,
+  },
+  {
+    name: "budgets",
+    path: "budgets",
     icon: <WalletIcon height={20} />,
+  },
+  {
+    name: "accounts",
+    path: "accounts",
+    icon: <CurrencyRupeeIcon height={20} />,
+  },
+  {
+    name: "categories",
+    path: "categories",
+    icon: <ListBulletIcon height={20} />,
   },
 ];
 
 function AppLayout() {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   return (
     <>
       <AppHeader>
@@ -47,9 +65,9 @@ function AppLayout() {
         height={"calc(100% - 56px)"}
       >
         <AppNavigation routes={navigationRoutes} expanded={expanded} />
-        <main>
+        <Container maxWidth='xl'>
           <Outlet />
-        </main>
+        </Container>
         <Toaster />
       </Stack>
     </>
