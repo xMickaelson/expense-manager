@@ -4,7 +4,7 @@ const authentication = require("../middleware/authentication");
 
 const router = express.Router()
 
-router.get('/hello', authentication, controller.hello)
-router.get('/token', controller.token)
+router.get('/login', controller.login)
+router.post('/register', controller.register)
 
 module.exports = router

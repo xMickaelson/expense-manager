@@ -1,6 +1,7 @@
 const express = require("express");
 const figlet = require("figlet");
 const morgan = require("morgan");
+const cors = require('cors')
 
 require('dotenv').config()
 
@@ -10,6 +11,7 @@ const routes = require("./routes");
 const app = express();
 const PORT = process.env.PORT;
 
+app.use(cors())
 // morgan for giving you logs when user hits a endpoint
 app.use(morgan("dev"));
 app.use(express.json());

@@ -10,7 +10,7 @@ function encode(id) {
 }
 
 /**
- *
+ * decodes the token and returns the payload
  * @param {string} token
  * @returns {Object}
  */
