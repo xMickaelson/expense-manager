@@ -1,8 +1,14 @@
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import AppNavigation from "../components/navigation/AppNavigation";
 import AppHeader from "../components/header/AppHeader";
-import { Avatar, Container, IconButton, Stack, Typography } from "@mui/joy";
-import { Toaster } from "sonner";
+import {
+  Avatar,
+  Button,
+  Container,
+  IconButton,
+  Stack,
+  Typography,
+} from "@mui/joy";
 import { NavigationRoute } from "../interfaces/NavigationRoute";
 import {
   ArrowTrendingUpIcon,
@@ -13,6 +19,7 @@ import {
   WalletIcon,
 } from "@heroicons/react/20/solid";
 import { useState } from "react";
+import useAuth from "../hooks/useAuth";
 
 const navigationRoutes: NavigationRoute[] = [
   {
@@ -43,20 +50,27 @@ const navigationRoutes: NavigationRoute[] = [
 ];
 
 function AppLayout() {
+  const { user, logout } = useAuth();
   const [expanded, setExpanded] = useState(true);
+
+  if (!user) return <Navigate to="/" />;
+
   return (
     <>
       <AppHeader>
         <AppHeader.Left>
-          <Stack direction='row' alignItems='center' gap={2}>
+          <Stack direction="row" alignItems="center" gap={2}>
             <IconButton onClick={() => setExpanded((e) => !e)}>
-              {<Bars2Icon height={20}/>}
+              {<Bars2Icon height={20} />}
             </IconButton>
             <Typography level="h4">Expenso</Typography>
           </Stack>
         </AppHeader.Left>
         <AppHeader.Right>
-          <Avatar />
+          <Stack direction="row" alignItems='center' gap={2}>
+            <Button onClick={() => logout()}>Logout</Button>
+            <Avatar />
+          </Stack>
         </AppHeader.Right>
       </AppHeader>
       <Stack
@@ -65,10 +79,9 @@ function AppLayout() {
         height={"calc(100% - 56px)"}
       >
         <AppNavigation routes={navigationRoutes} expanded={expanded} />
-        <Container maxWidth='xl'>
+        <Container maxWidth="xl">
           <Outlet />
         </Container>
-        <Toaster />
       </Stack>
     </>
   );

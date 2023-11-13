@@ -1,10 +1,6 @@
-import {
-  Button,
-  Container,
-  Stack,
-  Typography,
-} from "@mui/joy";
+import { Button, Container, Stack, Typography } from "@mui/joy";
 import AppHeader from "../components/header/AppHeader";
+import { NavLink } from "react-router-dom";
 
 function Home() {
   return (
@@ -15,7 +11,9 @@ function Home() {
         </AppHeader.Left>
         <AppHeader.Right>
           <Stack direction="row">
-            <Button variant="plain">Login / Sign Up</Button>
+            <NavLink to="/login">
+              <Button variant="plain">Login / Sign Up</Button>
+            </NavLink>
           </Stack>
         </AppHeader.Right>
       </AppHeader>
@@ -29,7 +27,9 @@ function Home() {
           <Typography fontSize={56} textAlign="center">
             Manage your expenses at <br /> your fingertips
           </Typography>
-          <Button size='lg'>Get Started</Button>
+          <NavLink to="/register">
+            <Button size="lg">Get Started</Button>
+          </NavLink>
         </Stack>
       </Container>
     </>
