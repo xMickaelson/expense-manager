@@ -2,6 +2,8 @@ const express = require("express");
 const figlet = require("figlet");
 const morgan = require("morgan");
 
+require('dotenv').config()
+
 const connection = require("./db");
 const routes = require("./routes");
 

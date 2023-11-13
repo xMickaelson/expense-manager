@@ -26,16 +26,6 @@ const userSchema = new Schema({
     required: true,
   },
 
-  budget: {
-    type: Number,
-    required: true,
-    default: 20000,
-  },
-
-  googleId: {
-    type: String,
-  },
-
   createdAt: {
     type: Date,
     default: Date.now,
