@@ -17,7 +17,6 @@ function AppHeader(props: AppHeaderProps) {
       }}
     >
       <Stack
-        maxWidth={"xl"}
         height={"100%"}
         paddingX={"16px"}
         direction={"row"}
