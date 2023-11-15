@@ -60,26 +60,29 @@ function AppLayout() {
       <AppHeader>
         <AppHeader.Left>
           <Stack direction="row" alignItems="center" gap={2}>
-            <IconButton onClick={() => setExpanded((e) => !e)}>
+            <IconButton
+              sx={{ display: { xs: "none", sm: "block" } }}
+              onClick={() => setExpanded((e) => !e)}
+            >
               {<Bars2Icon height={20} />}
             </IconButton>
             <Typography level="h4">Expenso</Typography>
           </Stack>
         </AppHeader.Left>
         <AppHeader.Right>
-          <Stack direction="row" alignItems='center' gap={2}>
+          <Stack direction="row" alignItems="center" gap={2}>
             <Button onClick={() => logout()}>Logout</Button>
             <Avatar />
           </Stack>
         </AppHeader.Right>
       </AppHeader>
       <Stack
-        direction={"row"}
+        direction={{ xs: "column-reverse", sm: "row" }}
         alignContent={"flex-start"}
         height={"calc(100% - 56px)"}
       >
         <AppNavigation routes={navigationRoutes} expanded={expanded} />
-        <Container maxWidth="xl">
+        <Container maxWidth="xl" sx={{ overflow: "auto", height: '100%' }}>
           <Outlet />
         </Container>
       </Stack>

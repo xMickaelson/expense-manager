@@ -13,7 +13,7 @@ function Budgets() {
   return (
     <Grid container paddingTop={"1.5rem"} spacing={2}>
       <Grid xs={12} sm={4} lg={3}>
-        <Card sx={{ height: "100%" }}>
+        <Card>
           <CardContent>
             <Typography>Category 1</Typography>
           </CardContent>
@@ -23,7 +23,7 @@ function Budgets() {
         </Card>
       </Grid>
       <Grid xs={12} sm={4} lg={3}>
-        <Card sx={{ height: "100%" }}>
+        <Card>
           <CardContent>
             <Typography>Category 2</Typography>
             <Typography level="h2">$900/1200</Typography>

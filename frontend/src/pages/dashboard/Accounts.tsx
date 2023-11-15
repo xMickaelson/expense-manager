@@ -34,7 +34,7 @@ function Accounts() {
           </CardContent>
         </Card>
       </Grid>
-      <Grid xs={3}>
+      <Grid xs={12} sm={4} md={3}>
         <Card variant="solid" color="primary" invertedColors>
           <CardContent>
             <Typography

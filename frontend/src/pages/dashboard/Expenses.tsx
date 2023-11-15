@@ -19,19 +19,29 @@ function Expenses() {
           direction="row"
           justifyContent="space-between"
           alignItems="center"
+          flexWrap="wrap"
+          gap={1}
         >
-          <ButtonGroup>
-            <Button>Daily</Button>
-            <Button>Weekly</Button>
-            <Button>Monthly</Button>
-          </ButtonGroup>
-          <Typography level="title-lg" color="neutral">
+          <Typography
+            level="title-lg"
+            color="neutral"
+            width={{ xs: "100%", sm: "initial" }}
+          >
             {new Date().toDateString()}
           </Typography>
-          <Button startDecorator={<PlusIcon height={20}/>}>Add a Expense</Button>
+          <Stack gap={1} direction="row" alignItems="center" flexWrap={'wrap'}>
+            <ButtonGroup>
+              <Button>Daily</Button>
+              <Button>Weekly</Button>
+              <Button>Monthly</Button>
+            </ButtonGroup>
+            <Button startDecorator={<PlusIcon height={20} />}>
+              Add a Expense
+            </Button>
+          </Stack>
         </Stack>
       </Grid>
-      <Grid xs={4}>
+      <Grid xs={6} sm={4}>
         <Card>
           <Typography level="body-md" color="neutral">
             Income
@@ -39,7 +49,7 @@ function Expenses() {
           <Typography level="h2">$900</Typography>
         </Card>
       </Grid>
-      <Grid xs={4}>
+      <Grid xs={6} sm={4}>
         <Card>
           <Typography level="body-md" color="neutral">
             Expenses
@@ -47,7 +57,7 @@ function Expenses() {
           <Typography level="h2">$900</Typography>
         </Card>
       </Grid>
-      <Grid xs={4}>
+      <Grid xs={12} sm={4}>
         <Card>
           <Typography level="body-md" color="neutral">
             Total

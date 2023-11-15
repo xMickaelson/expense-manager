@@ -23,8 +23,6 @@ function AppNavigation(props: AppNavigationProps) {
       variant="outlined"
       sx={{
         width: { xs: "100%", sm: expanded ? "200px" : "56px" },
-        position: { xs: "absolute", sm: "initial" },
-        bottom: 0,
         boxSizing: "border-box",
         borderTop: { sm: 0 },
         transition: "125ms ease-in all",
@@ -33,44 +31,51 @@ function AppNavigation(props: AppNavigationProps) {
       <Stack justifyContent={"center"}>
         <List
           sx={{
-            flexDirection: { xs: "row", sm: "column" },
             padding: { xs: 0, sm: "initial" },
+            flexDirection: { xs: "row", sm: "column" },
           }}
         >
           {routes?.map((route) => {
             return (
               <NavLink
                 to={route.path}
-                style={{ textDecoration: "none", color: "GrayText" }}
+                style={{
+                  textDecoration: "none",
+                  color: "GrayText",
+                  flexGrow: 1,
+                }}
                 key={route.path}
               >
                 {({ isActive }) => (
                   <ListItem
                     sx={{
                       height: "56px",
-                      width: { xs: "56px", sm: "initial" },
                     }}
                   >
                     <ListItemButton
-                      sx={{ overflow: "hidden", justifyContent: "center" }}
+                      sx={{
+                        overflow: "hidden",
+                        justifyContent: "center",
+                      }}
                       selected={isActive}
                       color={isActive ? "primary" : "neutral"}
                     >
-                      {expanded ? (
-                        <>
-                          <ListItemDecorator>{route.icon}</ListItemDecorator>
-                          <ListItemContent>
-                            <Typography
-                              textTransform="capitalize"
-                              color={isActive ? "primary" : "neutral"}
-                            >
-                              {route.name}
-                            </Typography>
-                          </ListItemContent>
-                        </>
-                      ) : (
-                        <>{route.icon}</>
-                      )}
+                      <ListItemDecorator>{route.icon}</ListItemDecorator>
+                      <ListItemContent
+                        sx={{
+                          display: {
+                            xs: "none",
+                            sm: expanded ? "block" : "none",
+                          },
+                        }}
+                      >
+                        <Typography
+                          textTransform="capitalize"
+                          color={isActive ? "primary" : "neutral"}
+                        >
+                          {route.name}
+                        </Typography>
+                      </ListItemContent>
                     </ListItemButton>
                   </ListItem>
                 )}
