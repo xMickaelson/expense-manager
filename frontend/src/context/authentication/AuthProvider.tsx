@@ -1,25 +1,32 @@
 import { ReactNode, useEffect } from "react";
 import AuthContext from "./AuthContext";
 import useAuthProvider from "../../hooks/useAuthProvider";
-import { useNavigate } from "react-router-dom";
+import useLoading from "../../hooks/useLoading";
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 function AuthProvider(props: AuthProviderProps) {
   const { children } = props;
-  const navigate = useNavigate()
+  const { loading, showProgress } = useLoading();
   const auth = useAuthProvider();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    auth.setUserDetails({ token, name: "" });
-    navigate('/dashboard')
+    const promise = auth.verify(token).then(() => {
+      auth.setUserDetails({ token, name: "" });
+    });
+
+    showProgress(promise);
   }, []);
 
-  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ ...auth, loading }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export default AuthProvider;

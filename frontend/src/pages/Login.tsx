@@ -12,7 +12,6 @@ import {
 import { useFormik } from "formik";
 import useAuth from "../hooks/useAuth";
 import { NavLink, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import useLoading from "../hooks/useLoading";
 
 function Login() {
@@ -25,7 +24,6 @@ function Login() {
       const promise = auth
         .login(data.email, data.password)
         .then(() => navigate("/dashboard"))
-        .catch((e) => toast(e.message));
       showProgress(promise);
     },
   });

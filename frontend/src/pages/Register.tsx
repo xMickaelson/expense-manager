@@ -12,7 +12,6 @@ import {
 import { useFormik } from "formik";
 import useAuth from "../hooks/useAuth";
 import { NavLink, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import useLoading from "../hooks/useLoading";
 
 function Register() {
@@ -25,7 +24,6 @@ function Register() {
       const promise = auth
         .register(data)
         .then(() => navigate("/login"))
-        .catch(() => toast("Error Occurred"));
       showProgress(promise);
     },
   });

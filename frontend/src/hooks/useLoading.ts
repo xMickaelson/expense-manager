@@ -1,11 +1,15 @@
 import { useState } from "react";
+import { toast } from "sonner";
 
 function useLoading() {
   const [loading, setLoading] = useState(false);
 
-  const showProgress = <T>(promise: Promise<T>) => {
+  const showProgress = async <T>(promise: Promise<T>) => {
     setLoading(true);
-    promise.then(() => setLoading(false));
+    await promise
+      .then(() => setLoading(false))
+      .catch((e) => toast(e.message))
+      .finally(() => setLoading(false));
   };
 
   return { showProgress, loading };

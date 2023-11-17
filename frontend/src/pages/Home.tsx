@@ -1,8 +1,14 @@
 import { Button, Container, Stack, Typography } from "@mui/joy";
 import AppHeader from "../components/header/AppHeader";
 import { NavLink } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 function Home() {
+  const { loading, user } = useAuth();
+
+  const NoUser = !user;
+  const IsLoading = loading;
+
   return (
     <>
       <AppHeader>
@@ -27,9 +33,17 @@ function Home() {
           <Typography fontSize={56} textAlign="center">
             Manage your expenses at <br /> your fingertips
           </Typography>
-          <NavLink to="/register">
-            <Button size="lg">Get Started</Button>
-          </NavLink>
+          {NoUser ? (
+            <NavLink to="/register">
+              <Button size="lg" loading={IsLoading}>
+                Get Started
+              </Button>
+            </NavLink>
+          ) : (
+            <NavLink to="/dashboard">
+              <Button size="lg">Go to Dashboard</Button>
+            </NavLink>
+          )}
         </Stack>
       </Container>
     </>

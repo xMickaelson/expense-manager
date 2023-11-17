@@ -11,6 +11,7 @@ function useAuthProvider() {
       `${import.meta.env.VITE_API_URL}/user/login`,
       {
         auth: { username: email, password: password },
+        validateStatus: () => true,
       }
     );
 
@@ -28,6 +29,23 @@ function useAuthProvider() {
       `${import.meta.env.VITE_API_URL}/user/register`,
       {
         ...details,
+      },
+      {
+        validateStatus: () => true,
+      }
+    );
+
+    const { message } = response.data;
+
+    if (response.status !== httpStatus.OK) throw Error(message);
+  };
+
+  const verify = async (token: string) => {
+    const response = await axios.get(
+      `${import.meta.env.VITE_API_URL}/user/verify`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+        validateStatus: () => true,
       }
     );
 
@@ -51,6 +69,7 @@ function useAuthProvider() {
     register,
     logout,
     setUserDetails,
+    verify,
   };
 }
 

@@ -17,10 +17,10 @@ function authentication(req, res, next) {
 
   try {
     const userDetails = tokenService.decode(token);
-    req["userId"] = userDetails.id;
+    req.body["userId"] = userDetails.id;
     next();
   } catch (e) {
-    console.log(e)
+    console.log(e);
     return res
       .status(httpStatus.UNAUTHORIZED)
       .send({ message: e.message, data: null });

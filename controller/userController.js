@@ -17,8 +17,6 @@ async function login(req, res) {
 
   const user = await User.findOne({ email: email });
 
-  console.log(email, await User.findOne({ email }));
-
   if (!user)
     return res
       .status(httpStatus.NOT_FOUND)
@@ -33,7 +31,7 @@ async function login(req, res) {
 
   return res.status(httpStatus.OK).send({
     message: "Login Succesfully",
-    data: { token: encode(user._id.toString("base64")), name: user.name },
+    data: { token: encode(user.id.toString("base64")), name: user.name },
   });
 }
 
@@ -49,6 +47,13 @@ async function register(req, res) {
     return res
       .status(httpStatus.BAD_REQUEST)
       .send({ message: "Missing user details", data: null });
+
+  const existingUser = await User.findOne({ email: email });
+
+  if (existingUser)
+    return res
+      .status(httpStatus.CONFLICT)
+      .send({ message: "User already exists", data: null });
 
   const hash = bcrypt.hashSync(password);
 
@@ -66,9 +71,22 @@ async function register(req, res) {
 }
 
 /**
+ * Endpoint for verifying the token
+ * @param {import("express").Request} req
+ * @param {import("express").Response} res
+ * @returns
+ */
+async function verify(_, res) {
+  return res
+    .status(httpStatus.OK)
+    .send({ message: "Token is valid", data: null });
+}
+
+/**
  * Export all functions from this file
  */
 module.exports = {
   login,
   register,
+  verify,
 };
