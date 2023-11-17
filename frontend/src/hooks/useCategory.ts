@@ -21,17 +21,28 @@ export function useCategory() {
     return data;
   };
 
-  const create = (category: Category) => {
-    return Axios.post(
+  const create = async (category: Category) => {
+    const response = await Axios.post(
       `${import.meta.env.VITE_API_URL}/category`,
       category
-    ).then((res) => res.data);
+    );
+
+    const { message, data } = response.data;
+    if (response.status !== httpStatus.OK) throw Error(message ?? "");
+
+    return data;
   };
 
-  const update = (id: string) => {
-    return Axios.put(`${import.meta.env.VITE_API_URL}/category/${id}`).then(
-      (res) => res.data
+  const update = async (id: string, category: Category) => {
+    const response = await Axios.put(
+      `${import.meta.env.VITE_API_URL}/category/${id}`,
+      category
     );
+
+    const { message, data } = response.data;
+    if (response.status !== httpStatus.OK) throw Error(message ?? "");
+
+    return data;
   };
 
   const remove = (id: string) => {

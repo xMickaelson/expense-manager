@@ -8,7 +8,7 @@ const categorySchema = new Schema({
     maxLength: [20, "Name cannot exceed 30 characters"],
   },
 
-  icon: {
+  emoji: {
     type: String,
   },
 

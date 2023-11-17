@@ -3,9 +3,12 @@ import AppNavigation from "../components/navigation/AppNavigation";
 import AppHeader from "../components/header/AppHeader";
 import {
   Avatar,
-  Button,
   Container,
+  Dropdown,
   IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
   Stack,
   Typography,
 } from "@mui/joy";
@@ -20,6 +23,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { useState } from "react";
 import useAuth from "../hooks/useAuth";
+import * as jdenticon from "jdenticon";
 
 const navigationRoutes: NavigationRoute[] = [
   {
@@ -71,8 +75,27 @@ function AppLayout() {
         </AppHeader.Left>
         <AppHeader.Right>
           <Stack direction="row" alignItems="center" gap={2}>
-            <Button onClick={() => logout()}>Logout</Button>
-            <Avatar />
+            <Dropdown>
+              <MenuButton
+                slots={{ root: IconButton }}
+                slotProps={{ root: { variant: "outlined" } }}
+                sx={{ borderRadius: 100, padding: 0 }}
+              >
+                <Avatar
+                  src={`data:image/svg+xml;utf8,${encodeURIComponent(
+                    jdenticon.toSvg(user.name, 100)
+                  )}`}
+                />
+              </MenuButton>
+              <Menu sx={{ width: 200 }}>
+                <MenuItem disabled>
+                  <Typography>Hi, {user.name}</Typography>
+                </MenuItem>
+                <MenuItem color="danger" onClick={() => logout()}>
+                  Logout
+                </MenuItem>
+              </Menu>
+            </Dropdown>
           </Stack>
         </AppHeader.Right>
       </AppHeader>
@@ -82,7 +105,7 @@ function AppLayout() {
         height={"calc(100% - 56px)"}
       >
         <AppNavigation routes={navigationRoutes} expanded={expanded} />
-        <Container maxWidth="xl" sx={{ overflow: "auto", height: '100%' }}>
+        <Container maxWidth="xl" sx={{ overflow: "auto", height: "100%" }}>
           <Outlet />
         </Container>
       </Stack>

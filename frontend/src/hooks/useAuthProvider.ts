@@ -49,9 +49,11 @@ function useAuthProvider() {
       }
     );
 
-    const { message } = response.data;
+    const { message, data } = response.data;
 
     if (response.status !== httpStatus.OK) throw Error(message);
+
+    setUser({ token: token, name: data.name });
   };
 
   const logout = () => {

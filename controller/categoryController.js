@@ -13,7 +13,7 @@ async function getAllCategory(req, res) {
     message: "",
     data: allCategories.map((c) => ({
       name: c.name,
-      icon: c.icon,
+      emoji: c.emoji,
       id: c.id,
     })),
   });
@@ -27,7 +27,7 @@ async function getAllCategory(req, res) {
 async function createCategory(req, res) {
   const { name, emoji, userId } = req.body;
 
-  if (!name || !emoji)
+  if (!name || !emoji || !userId)
     return res
       .status(httpStatus.BAD_REQUEST)
       .send({ message: "Missing fields", data: null });

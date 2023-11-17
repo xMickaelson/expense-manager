@@ -76,10 +76,21 @@ async function register(req, res) {
  * @param {import("express").Response} res
  * @returns
  */
-async function verify(_, res) {
+async function verify(req, res) {
+  const { userId } = req.body;
+  const user = await User.findById(userId);
+
+  if (!user)
+    return res.status(httpStatus.NOT_FOUND).send({
+      message: "User not found",
+      data: null,
+    });
+
+  console.log(user.name)
+
   return res
     .status(httpStatus.OK)
-    .send({ message: "Token is valid", data: null });
+    .send({ message: "Token is valid", data: { name: user.name } });
 }
 
 /**

@@ -15,9 +15,7 @@ function AuthProvider(props: AuthProviderProps) {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    const promise = auth.verify(token).then(() => {
-      auth.setUserDetails({ token, name: "" });
-    });
+    const promise = auth.verify(token);
 
     showProgress(promise);
   }, []);
