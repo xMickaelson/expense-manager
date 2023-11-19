@@ -1,9 +1,9 @@
 import axios from "axios";
 import useAuth from "./useAuth";
-import { Category } from "../interfaces/Category";
+import { Account } from "../interfaces/Account";
 import httpStatus from "http-status";
 
-export function useCategory() {
+export function useAccount() {
   const { user } = useAuth();
 
   const Axios = axios.create({
@@ -13,7 +13,7 @@ export function useCategory() {
 
   const getAll = async () => {
     const response = await Axios.get(
-      `${import.meta.env.VITE_API_URL}/category`
+      `${import.meta.env.VITE_API_URL}/account`
     );
     const { message, data } = response.data;
     if (response.status !== httpStatus.OK) throw Error(message ?? "");
@@ -21,10 +21,10 @@ export function useCategory() {
     return data;
   };
 
-  const create = async (category: Category) => {
+  const create = async (account: Account) => {
     const response = await Axios.post(
-      `${import.meta.env.VITE_API_URL}/category`,
-      category
+      `${import.meta.env.VITE_API_URL}/account`,
+      account
     );
 
     const { message, data } = response.data;
@@ -33,10 +33,10 @@ export function useCategory() {
     return data;
   };
 
-  const update = async (id: string, category: Category) => {
+  const update = async (id: string, account: Account) => {
     const response = await Axios.put(
-      `${import.meta.env.VITE_API_URL}/category/${id}`,
-      category
+      `${import.meta.env.VITE_API_URL}/account/${id}`,
+      account
     );
 
     const { message, data } = response.data;
@@ -46,7 +46,7 @@ export function useCategory() {
   };
 
   const remove = async (id: string) => {
-    const response = await Axios.delete(`${import.meta.env.VITE_API_URL}/category/${id}`)
+    const response = await Axios.delete(`${import.meta.env.VITE_API_URL}/account/${id}`)
 
     const { message, data } = response.data;
     if (response.status !== httpStatus.OK) throw Error(message ?? "Some Error Occurred");

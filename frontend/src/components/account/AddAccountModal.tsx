@@ -11,39 +11,38 @@ import {
   ModalOverflow,
   Stack,
 } from "@mui/joy";
-import { Category } from "../../interfaces/Category";
-import { useCategory } from "../../hooks/useCategory";
-import EmojiPicker, { EmojiStyle, SkinTones } from "emoji-picker-react";
+import { Account } from "../../interfaces/Account";
+import { useAccount } from "../../hooks/useAccount";
 import { useFormik } from "formik";
 import useLoading from "../../hooks/useLoading";
 import { useEffect } from "react";
 
-interface AddCategoryModalProps {
-  category: Category;
+interface AddAccountModalProps {
+  account: Account;
   open: boolean;
   onClose: () => void;
 }
-function AddCategoryModal({ category, open, onClose }: AddCategoryModalProps) {
-  const { create, update } = useCategory();
+function AddAccountModal({ account, open, onClose }: AddAccountModalProps) {
+  const { create, update } = useAccount();
   const { showProgress, loading } = useLoading();
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      id: category.id,
-      name: category.name,
-      emoji: category.emoji,
+      id: account.id,
+      balance: account.balance,
+      name: account.name,
     },
     onSubmit: (data) => {
       console.log(data);
       const promise = (
-        category.id === ""
+        account.id === ""
           ? create({ ...data })
-          : update(category.id, { ...data })
+          : update(account.id, { ...data })
       ).then(() => onClose());
       showProgress(promise);
     },
   });
-  const IsNew = category.id === "";
+  const IsNew = account.id === "";
 
   useEffect(() => {
     return () => formik.resetForm();
@@ -54,7 +53,7 @@ function AddCategoryModal({ category, open, onClose }: AddCategoryModalProps) {
       <ModalOverflow>
         <ModalDialog>
           <ModalClose />
-          <DialogTitle>{IsNew ? "New Category" : "Edit Category"}</DialogTitle>
+          <DialogTitle>{IsNew ? "New Account" : "Edit Account"}</DialogTitle>
           <Stack gap={2}>
             <FormControl>
               <FormLabel>Name</FormLabel>
@@ -65,19 +64,6 @@ function AddCategoryModal({ category, open, onClose }: AddCategoryModalProps) {
                 value={formik.values.name}
               />
             </FormControl>
-            <FormControl>
-              <FormLabel>Icon</FormLabel>
-              <Input disabled placeholder="icon" value={formik.values.emoji} />
-            </FormControl>
-            <EmojiPicker
-              onEmojiClick={(emoji) =>
-                formik.setFieldValue("emoji", emoji.imageUrl)
-              }
-              previewConfig={{ showPreview: false }}
-              emojiStyle={EmojiStyle.GOOGLE}
-              defaultSkinTone={SkinTones.NEUTRAL}
-              skinTonesDisabled
-            />
           </Stack>
           <DialogActions>
             <Button
@@ -85,7 +71,7 @@ function AddCategoryModal({ category, open, onClose }: AddCategoryModalProps) {
               loading={loading}
               onClick={() => formik.handleSubmit()}
             >
-              {IsNew ? "Add Category" : "Update Category"}
+              {IsNew ? "Add Account" : "Update Account"}
             </Button>
           </DialogActions>
         </ModalDialog>
@@ -94,4 +80,4 @@ function AddCategoryModal({ category, open, onClose }: AddCategoryModalProps) {
   );
 }
 
-export default AddCategoryModal;
+export default AddAccountModal;

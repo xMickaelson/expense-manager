@@ -46,8 +46,8 @@ async function createCategory(req, res) {
  * @param {import("express").Request} req
  * @param {import("express").Response} res
  */
-function updateCategory(req, res) {
-  const { cId } = req.params;
+async function updateCategory(req, res) {
+  const { id } = req.params;
   const { name, emoji } = req.body;
 
   if (!name || !emoji)
@@ -55,7 +55,12 @@ function updateCategory(req, res) {
       .status(httpStatus.BAD_REQUEST)
       .send({ message: "Missing fields", data: null });
 
-  const category = Category.findByIdAndUpdate(cId, { name, emoji });
+  const category = await Category.findById(id)
+
+  category.name = name
+  category.emoji = emoji
+
+  await category.save()
 
   if (!category)
     return res
@@ -67,20 +72,23 @@ function updateCategory(req, res) {
     data: { id: category.id },
   });
 }
+
 /**
  * Endpoint to delete a category
  * @param {import("express").Request} req
  * @param {import("express").Response} res
  */
-function deleteCategory(req, res) {
-  const { cId } = req.params;
+async function deleteCategory(req, res) {
+  const { id } = req.params;
 
-  const category = Category.findByIdAndDelete(cId);
+  const category = await Category.findById(id);
 
   if (!category)
     return res
       .status(httpStatus.NOT_FOUND)
       .send({ message: "Category not found", data: null });
+
+  await category.deleteOne()
 
   return res.status(httpStatus.OK).send({
     message: "Category deleted sucessfully",

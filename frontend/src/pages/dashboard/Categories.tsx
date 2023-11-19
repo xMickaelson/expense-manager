@@ -18,10 +18,11 @@ import { Category } from "../../interfaces/Category";
 import { useCategory } from "../../hooks/useCategory";
 import useLoading from "../../hooks/useLoading";
 import AddCategoryModal from "../../components/category/AddCategoryModal";
+import ConfirmDialog from "../../components/utility/ConfirmDialog";
 
 function Categories() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const { getAll } = useCategory();
+  const { getAll, remove } = useCategory();
   const { showProgress, loading } = useLoading();
   const [selectedCategory, setSelectedCategory] = useState<Category>({
     id: "",
@@ -29,13 +30,16 @@ function Categories() {
     emoji: "",
   });
   const [open, setOpen] = useState(false);
+  const [dirty, setDirty] = useState(true);
 
   const IsLoading = loading;
 
   useEffect(() => {
     const promise = getAll().then((data) => setCategories(data));
     showProgress(promise);
-  }, []);
+  }, [dirty]);
+
+  const reload = () => setDirty((d) => !d);
 
   return (
     <Grid container paddingTop="1.5rem" spacing={2}>
@@ -55,7 +59,10 @@ function Categories() {
           </Button>
           <AddCategoryModal
             open={open}
-            onClose={() => setOpen(false)}
+            onClose={() => {
+              setOpen(false);
+              reload();
+            }}
             category={selectedCategory}
           />
         </Grid>
@@ -83,9 +90,21 @@ function Categories() {
               >
                 <PencilIcon height={16} />
               </IconButton>
-              <IconButton variant="soft" size="sm">
-                <TrashIcon height={16} />
-              </IconButton>
+              <ConfirmDialog
+                confirm="Are you sure you want to delete this category?"
+                onConfirm={async () => remove(c.id)}
+                confirmTitle="Delete"
+              >
+                {(setOpen) => (
+                  <IconButton
+                    variant="soft"
+                    size="sm"
+                    onClick={() => setOpen(true)}
+                  >
+                    <TrashIcon height={16} />
+                  </IconButton>
+                )}
+              </ConfirmDialog>
             </CardActions>
           </Card>
         </Grid>
