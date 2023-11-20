@@ -13,7 +13,8 @@ const categorySchema = new Schema({
   },
 
   userId: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: "User",
     required: [true, "UserId is required"],
   },
 

@@ -55,12 +55,12 @@ async function updateCategory(req, res) {
       .status(httpStatus.BAD_REQUEST)
       .send({ message: "Missing fields", data: null });
 
-  const category = await Category.findById(id)
+  const category = await Category.findById(id);
 
-  category.name = name
-  category.emoji = emoji
+  category.name = name;
+  category.emoji = emoji;
 
-  await category.save()
+  await category.save();
 
   if (!category)
     return res
@@ -88,7 +88,7 @@ async function deleteCategory(req, res) {
       .status(httpStatus.NOT_FOUND)
       .send({ message: "Category not found", data: null });
 
-  await category.deleteOne()
+  await category.deleteOne();
 
   return res.status(httpStatus.OK).send({
     message: "Category deleted sucessfully",

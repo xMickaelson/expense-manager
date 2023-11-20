@@ -58,7 +58,9 @@ function Accounts() {
                 <Typography level="title-md" color="neutral">
                   Available Balance
                 </Typography>
-                <Typography level="h2">$12,000</Typography>
+                <Typography level="h2">
+                  ${accounts.reduce((p, c) => p + c.balance, 0)}
+                </Typography>
               </Box>
               <Button
                 onClick={() => {
