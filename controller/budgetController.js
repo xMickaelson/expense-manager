@@ -1,5 +1,6 @@
 const httpStatus = require("http-status");
 const Budget = require("../model/budget");
+const Category = require("../model/category");
 
 /**
  * Endpoint to get all categories
@@ -7,17 +8,22 @@ const Budget = require("../model/budget");
  * @param {import("express").Response} res
  */
 async function getAllBudget(req, res) {
-  const userId = req.body.userId;
-  const allBudgets = await Budget.find({ userId: userId }).select({
-    _id: 0,
-    userId: 0,
-  });
+  const { userId, month, year } = req.body;
+  const categories = await Category.find({ userId: userId });
+  const allBudgets = await Promise.all(categories.map(async (category) => {
+    const budget = await Budget.findOne({
+      category: category._id,
+      month: month,
+      year: year
+    });
+    category = category.toObject();
+    category.budget = budget || null;
+    return category;
+  }));
+
   return res.status(httpStatus.OK).send({
     message: "",
-    data: allBudgets.map((b) => ({
-      ...b,
-      id: b.id,
-    })),
+    data: allBudgets,
   });
 }
 
