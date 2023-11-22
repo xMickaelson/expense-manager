@@ -24,9 +24,9 @@ export function useBudget() {
     return data;
   };
 
-  const create = async (budget: Budget) => {
+  const create = async (categoryId: string,budget: Budget) => {
     const response = await Axios.post(
-      `${import.meta.env.VITE_API_URL}/budget`,
+      `${import.meta.env.VITE_API_URL}/budget/${categoryId}`,
       budget
     );
 

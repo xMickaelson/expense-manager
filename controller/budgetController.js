@@ -10,16 +10,18 @@ const Category = require("../model/category");
 async function getAllBudget(req, res) {
   const { userId, month, year } = req.body;
   const categories = await Category.find({ userId: userId });
-  const allBudgets = await Promise.all(categories.map(async (category) => {
-    const budget = await Budget.findOne({
-      category: category._id,
-      month: month,
-      year: year
-    });
-    category = category.toObject();
-    category.budget = budget || null;
-    return category;
-  }));
+  const allBudgets = await Promise.all(
+    categories.map(async (category) => {
+      const budget = await Budget.findOne({
+        category: category._id,
+        month: month,
+        year: year,
+      });
+      budgetCategory = category.toObject();
+      budgetCategory.budget = budget || null;
+      return { ...budgetCategory, id: category.id };
+    })
+  );
 
   return res.status(httpStatus.OK).send({
     message: "",
@@ -41,7 +43,16 @@ async function createBudget(req, res) {
       .status(httpStatus.BAD_REQUEST)
       .send({ message: "Missing fields", data: null });
 
-  const newBudget = new Budget({ limit, month, year });
+  const category = await Category.findById(id);
+
+  if (!category)
+    return res.status(httpStatus.NOT_FOUND).send({
+      message: "Category not found",
+      data: null,
+    });
+
+  const newBudget = new Budget({ category: category._id, limit, month, year });
+
   await newBudget.save();
 
   return res.status(httpStatus.OK).send({
@@ -57,17 +68,16 @@ async function createBudget(req, res) {
  */
 async function updateBudget(req, res) {
   const { id } = req.params;
-  const { name, emoji } = req.body;
+  const { limit } = req.body;
 
-  if (!name || !emoji)
+  if (!limit)
     return res
       .status(httpStatus.BAD_REQUEST)
       .send({ message: "Missing fields", data: null });
 
   const budget = await Budget.findById(id);
 
-  budget.name = name;
-  budget.emoji = emoji;
+  budget.limit = limit;
 
   await budget.save();
 

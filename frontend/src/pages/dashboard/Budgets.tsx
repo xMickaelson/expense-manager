@@ -1,12 +1,15 @@
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
 import {
   Avatar,
+  Box,
   Button,
   Card,
   CardActions,
   CardContent,
+  CircularProgress,
   Grid,
   IconButton,
+  LinearProgress,
   Stack,
   Typography,
 } from "@mui/joy";
@@ -17,15 +20,11 @@ import useLoading from "../../hooks/useLoading";
 import AddBudgetModal from "../../components/budget/AddBudgetModal";
 
 function Budgets() {
-  const [month, setMonth] = useState(0);
+  const [month, setMonth] = useState(new Date().getMonth());
   const [open, setOpen] = useState(false);
   const { getAll } = useBudget();
-  const { showProgress } = useLoading();
+  const { showProgress, loading } = useLoading();
   const [budgets, setBudgets] = useState<Category[]>([]);
-
-  useEffect(() => {
-    setMonth(new Date().getMonth());
-  }, []);
 
   useEffect(() => {
     const promise = getAll(month, new Date().getFullYear()).then((data) =>
@@ -33,6 +32,8 @@ function Budgets() {
     );
     showProgress(promise);
   }, [month]);
+
+  const IsLoading = loading;
 
   const increaseMonth = () => setMonth(Math.min(month + 1, 11));
   const decreaseMonth = () => setMonth(Math.max(month - 1, 0));
@@ -62,20 +63,36 @@ function Budgets() {
           </IconButton>
         </Stack>
       </Grid>
-      {budgets.map((b) => (
-        <Grid xs={12} sm={4} lg={3}>
-          <Card>
+      {IsLoading && (
+        <Grid xs={12} justifyContent="center" container paddingTop={10}>
+          <CircularProgress />
+        </Grid>
+      )}
+      {budgets.sort((a, b) => ((b.budget ? 1: 0) - (a.budget ? 1: 0))).map((b) => (
+        <Grid xs={12} sm={4} lg={3} display="flex">
+          <Card sx={{ width: "100%" }}>
             <CardContent orientation="horizontal">
               <Avatar src={b.emoji} size="sm" />
               <Typography level="title-lg">{b.name}</Typography>
             </CardContent>
+            {b.budget && (
+              <>
+                <Typography level="h2">${b.budget?.limit}</Typography>
+                <Box>
+                  <LinearProgress determinate value={50} />
+                </Box>
+              </>
+            )}
             <CardActions>
-              {!b.budget && (
-                <>
-                  <Button onClick={() => setOpen(true)}>Set Budget</Button>
-                  <AddBudgetModal budget={b} open={open} onClose={() => setOpen(false)}/>
-                </>
-              )}
+              <Button onClick={() => setOpen(true)}>
+                {b.budget ? "Update Budget" : "Set Budget"}
+              </Button>
+              <AddBudgetModal
+                month={month}
+                budget={b}
+                open={open}
+                onClose={() => setOpen(false)}
+              />
             </CardActions>
           </Card>
         </Grid>
