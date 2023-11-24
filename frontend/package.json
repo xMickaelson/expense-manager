@@ -16,6 +16,7 @@
     "@mui/joy": "^5.0.0-beta.14",
     "@mui/x-charts": "^6.18.1",
     "axios": "^1.6.1",
+    "date-fns": "^2.30.0",
     "emoji-picker-react": "^4.5.15",
     "formik": "^2.4.5",
     "framer-motion": "^10.16.4",

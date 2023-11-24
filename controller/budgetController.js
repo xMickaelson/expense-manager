@@ -18,7 +18,7 @@ async function getAllBudget(req, res) {
         year: year,
       });
       budgetCategory = category.toObject();
-      budgetCategory.budget = budget || null;
+      budgetCategory.budget = budget ? { ...budget.toObject(), id: budget.id } : null;
       return { ...budgetCategory, id: category.id };
     })
   );
