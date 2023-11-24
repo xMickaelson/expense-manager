@@ -67,7 +67,7 @@ function AddExpenseModal({ open, onClose, expense }: AddExpenseModalProps) {
               <Select
                 placeholder={"Select Expense Type"}
                 value={formik.values.type}
-                onChange={(e, v) => formik.setFieldValue("type", v)}
+                onChange={(_, v) => formik.setFieldValue("type", v)}
               >
                 {Object.entries(ExpenseType).map((entry) => (
                   <Option value={entry[1]}>{entry[1]}</Option>

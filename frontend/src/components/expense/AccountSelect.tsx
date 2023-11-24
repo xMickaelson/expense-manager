@@ -22,7 +22,7 @@ function AccountSelect({ value, onChange }: AccountSelectProps) {
       <FormLabel>Account</FormLabel>
       <Select
         value={value}
-        onChange={(e, v) => onChange(v ?? "")}
+        onChange={(_, v) => onChange(v ?? "")}
         placeholder="Select a Account"
       >
         {loading && <CircularProgress size="sm" />}
