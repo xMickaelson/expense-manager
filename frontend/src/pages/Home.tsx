@@ -1,7 +1,8 @@
-import { Button, Container, Stack, Typography } from "@mui/joy";
+import { Avatar, Button, Container, Stack, Typography } from "@mui/joy";
 import AppHeader from "../components/header/AppHeader";
 import { NavLink } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import jdenticon from "jdenticon/standalone";
 
 function Home() {
   const { loading, user } = useAuth();
@@ -18,7 +19,14 @@ function Home() {
         <AppHeader.Right>
           <Stack direction="row">
             <NavLink to="/login">
-              <Button variant="plain">Login / Sign Up</Button>
+              {NoUser && <Button variant="plain">Login / Sign Up</Button>}
+              {!NoUser && (
+                <Avatar
+                  src={`data:image/svg+xml;utf8,${encodeURIComponent(
+                    jdenticon.toSvg(user.name, 100)
+                  )}`}
+                />
+              )}
             </NavLink>
           </Stack>
         </AppHeader.Right>

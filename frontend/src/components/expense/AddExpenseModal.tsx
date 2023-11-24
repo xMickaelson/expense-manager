@@ -69,8 +69,8 @@ function AddExpenseModal({ open, onClose, expense }: AddExpenseModalProps) {
                 value={formik.values.type}
                 onChange={(e, v) => formik.setFieldValue("type", v)}
               >
-                {Object.entries(ExpenseType).map(([_, v]) => (
-                  <Option value={v}>{v}</Option>
+                {Object.entries(ExpenseType).map((entry) => (
+                  <Option value={entry[1]}>{entry[1]}</Option>
                 ))}
               </Select>
             </FormControl>
@@ -103,10 +103,12 @@ function AddExpenseModal({ open, onClose, expense }: AddExpenseModalProps) {
                 />
               </FormControl>
             </Stack>
-            {formik.values.type === ExpenseType.EXPENSE && <CategorySelect
-              value={formik.values.categoryId!}
-              onChange={(v) => formik.setFieldValue("categoryId", v)}
-            />}
+            {formik.values.type === ExpenseType.EXPENSE && (
+              <CategorySelect
+                value={formik.values.categoryId!}
+                onChange={(v) => formik.setFieldValue("categoryId", v)}
+              />
+            )}
             <AccountSelect
               value={formik.values.accountId}
               onChange={(v) => formik.setFieldValue("accountId", v)}
