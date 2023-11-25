@@ -9,13 +9,25 @@ const ExpenseType = require("../enums/ExpenseType");
  */
 async function getAllExpense(req, res) {
   const userId = req.body.userId;
-  const allExpenses = await Expense.find({ userId: userId }).populate(["category", "account"]);
+  const allExpenses = await Expense.find({ userId: userId }).populate([
+    "category",
+    "account",
+  ]);
   return res.status(httpStatus.OK).send({
     message: "",
-    data: allExpenses.map((e) => ({
-      ...e.toObject(),
-      id: e.id,
-    })),
+    data: allExpenses.map((e) => {
+      const expense = e.toObject();
+      expense.account = { ...expense.account, id: e.account.id };
+
+      if (expense.category) {
+        expense.category = { ...expense.category, id: e.category.id };
+      }
+
+      return {
+        ...expense,
+        id: e.id,
+      };
+    }),
   });
 }
 
@@ -25,11 +37,19 @@ async function getAllExpense(req, res) {
  * @param {import("express").Response} res
  */
 async function createExpense(req, res) {
-  const { amount, description, date, type, categoryId, accountId, userId } = req.body;
+  const { amount, description, date, type, categoryId, accountId, userId } =
+    req.body;
 
-  const isExpense = type === ExpenseType.EXPENSE
+  const isExpense = type === ExpenseType.EXPENSE;
 
-  if (!amount || !description || !date || (isExpense ? !categoryId: false) || !accountId || !userId)
+  if (
+    !amount ||
+    !description ||
+    !date ||
+    (isExpense ? !categoryId : false) ||
+    !accountId ||
+    !userId
+  )
     return res
       .status(httpStatus.BAD_REQUEST)
       .send({ message: "Missing fields", data: null });
@@ -39,7 +59,7 @@ async function createExpense(req, res) {
     description,
     date,
     type,
-    category: isExpense ? categoryId: null,
+    category: isExpense ? categoryId : null,
     account: accountId,
     userId,
   });

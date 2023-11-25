@@ -39,8 +39,7 @@ function ConfirmDialog({
               loading={loading}
               onClick={() => {
                 const promise = onConfirm();
-                showProgress(promise);
-                setOpen(false);
+                showProgress(promise).then(() => setOpen(false));
               }}
             >
               {confirmTitle ?? "Ok"}

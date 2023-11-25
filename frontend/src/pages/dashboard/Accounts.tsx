@@ -42,6 +42,8 @@ function Accounts() {
     showProgress(promise);
   }, [dirty]);
 
+  const accountBalance = accounts.reduce((p, c) => p + c.balance, 0)
+
   const reload = () => setDirty((d) => !d);
 
   return (
@@ -59,7 +61,7 @@ function Accounts() {
                   Available Balance
                 </Typography>
                 <Typography level="h2">
-                  ${accounts.reduce((p, c) => p + c.balance, 0)}
+                  {accountBalance < 0 ? "-": ""}${Math.abs(accountBalance)}
                 </Typography>
               </Box>
               <Button
@@ -98,7 +100,7 @@ function Accounts() {
                 {a.name}
               </Typography>
               <Typography level="h3" paddingY="1rem">
-                ${a.balance}
+                {a.balance < 0 ? "-": ""}${Math.abs(a.balance)}
               </Typography>
             </CardContent>
             <CardActions orientation="horizontal-reverse">
@@ -114,7 +116,7 @@ function Accounts() {
               </IconButton>
               <ConfirmDialog
                 confirm="Are you sure you want to delete this accounts?"
-                onConfirm={() => remove(a.id)}
+                onConfirm={() => remove(a.id).then(() => reload())}
               >
                 {(setOpen) => (
                   <IconButton

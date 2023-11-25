@@ -1,5 +1,7 @@
 const httpStatus = require("http-status");
 const Account = require("../model/account");
+const Expense = require("../model/expense");
+const ExpenseType = require("../enums/ExpenseType");
 
 /**
  * Endpoint to get all account
@@ -9,13 +11,20 @@ const Account = require("../model/account");
 async function getAllAccount(req, res) {
   const userId = req.body.userId;
   const allAccounts = await Account.find({ userId: userId });
-  return res.status(httpStatus.OK).send({
-    message: "",
-    data: allAccounts.map((a) => ({
+
+  const accountWithBalance = await Promise.all(allAccounts.map(async a => {
+    const expenses = await Expense.find({userId: userId, account: a.id})
+    const balance = expenses.reduce((p, c) => p + (c.type === ExpenseType.EXPENSE ? -1 : 1) * c.amount, 0)
+    return {
       id: a.id,
       name: a.name,
-      balance: 0, // To be calculated
-    })),
+      balance: balance
+    }
+  }))
+
+  return res.status(httpStatus.OK).send({
+    message: "",
+    data: accountWithBalance,
   });
 }
 

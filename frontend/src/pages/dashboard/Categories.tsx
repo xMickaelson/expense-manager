@@ -92,7 +92,7 @@ function Categories() {
               </IconButton>
               <ConfirmDialog
                 confirm="Are you sure you want to delete this category?"
-                onConfirm={async () => remove(c.id)}
+                onConfirm={async () => remove(c.id).then(() => reload())}
                 confirmTitle="Delete"
               >
                 {(setOpen) => (

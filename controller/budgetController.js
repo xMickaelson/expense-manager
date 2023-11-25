@@ -1,6 +1,9 @@
 const httpStatus = require("http-status");
+const datefns = require("date-fns");
 const Budget = require("../model/budget");
 const Category = require("../model/category");
+const Expense = require("../model/expense");
+const ExpenseType = require("../enums/ExpenseType");
 
 /**
  * Endpoint to get all categories
@@ -17,8 +20,25 @@ async function getAllBudget(req, res) {
         month: month,
         year: year,
       });
+
+      const monthStart = datefns.startOfMonth(new Date(year, month));
+      const monthEnd = datefns.endOfMonth(new Date(year, month));
+
+      const expenses = await Expense.find({
+        userId: userId,
+        category: category.id,
+        date: {
+          $gte: monthStart,
+          $lte: monthEnd
+        }
+      });
+
+      const budgetExpense = expenses.reduce((p, c) => p + c.amount, 0);
+
       budgetCategory = category.toObject();
-      budgetCategory.budget = budget ? { ...budget.toObject(), id: budget.id } : null;
+      budgetCategory.budget = budget
+        ? { ...budget.toObject(), expense: budgetExpense, id: budget.id }
+        : null;
       return { ...budgetCategory, id: category.id };
     })
   );

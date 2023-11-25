@@ -3,4 +3,5 @@ export interface Budget {
   limit: number;
   month: number;
   year: number;
+  expense?: number;
 }

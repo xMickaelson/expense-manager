@@ -85,9 +85,23 @@ function Budgets() {
               </CardContent>
               {b.budget && (
                 <>
-                  <Typography level="h2">${b.budget?.limit}</Typography>
+                  <Typography
+                    level="h2"
+                    color={
+                      (b.budget.expense ?? 0) > b.budget.limit
+                        ? "danger"
+                        : "success"
+                    }
+                  >
+                    ${b.budget.expense}{" "}
+                    <Typography level="h3">/ {b.budget?.limit}</Typography>
+                  </Typography>
+                  <Typography level='title-md' color='neutral'>${Math.abs(b.budget.limit - (b.budget.expense ?? 0))} {(b.budget.expense ?? 0) > b.budget.limit ? "exceeded": "remaining"}</Typography>
                   <Box>
-                    <LinearProgress determinate value={50} />
+                    <LinearProgress
+                      determinate
+                      value={Math.min(((b.budget.expense ?? 0) / b.budget.limit) * 100, 100)}
+                    />
                   </Box>
                 </>
               )}

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Expense = require("./expense");
 
 const Schema = mongoose.Schema;
 const accountSchema = new Schema({
@@ -19,5 +20,10 @@ const accountSchema = new Schema({
     default: Date.now,
   },
 });
+
+accountSchema.post('deleteOne', {document: true}, async (next) => {
+  console.log(`Clearing expenses for account ${this.toString()}`)
+  next()
+})
 
 module.exports = mongoose.model("Account", accountSchema);

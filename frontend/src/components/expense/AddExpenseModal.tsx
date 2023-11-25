@@ -49,7 +49,9 @@ function AddExpenseModal({ open, onClose, expense }: AddExpenseModalProps) {
     <Modal open={open} onClose={onClose}>
       <ModalOverflow>
         <ModalDialog>
-          <DialogTitle>Add Expense</DialogTitle>
+          <DialogTitle>
+            {expense.id === "" ? "Add Expense" : "Update Expense"}
+          </DialogTitle>
           <ModalClose />
           <Stack gap={1}>
             <FormControl>
@@ -113,8 +115,12 @@ function AddExpenseModal({ open, onClose, expense }: AddExpenseModalProps) {
               value={formik.values.accountId}
               onChange={(v) => formik.setFieldValue("accountId", v)}
             />
-            <Button loading={loading} onClick={() => formik.handleSubmit()}>
-              Add Expense
+            <Button
+              disabled={!formik.dirty}
+              loading={loading}
+              onClick={() => formik.handleSubmit()}
+            >
+              {expense.id === "" ? "Add Expense" : "Update Expense"}
             </Button>
           </Stack>
         </ModalDialog>

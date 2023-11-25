@@ -2,7 +2,6 @@ import { PencilIcon, PlusIcon, TrashIcon } from "@heroicons/react/20/solid";
 import {
   Avatar,
   Button,
-  ButtonGroup,
   Card,
   CircularProgress,
   Grid,
@@ -12,6 +11,7 @@ import {
   ListItem,
   ListItemDecorator,
   Stack,
+  ToggleButtonGroup,
   Typography,
 } from "@mui/joy";
 import AddExpenseModal from "../../components/expense/AddExpenseModal";
@@ -22,9 +22,12 @@ import { Account } from "../../interfaces/Account";
 import { useExpense } from "../../hooks/useExpense";
 import { ExpenseType } from "../../interfaces/ExpenseType";
 import ConfirmDialog from "../../components/utility/ConfirmDialog";
+import { ExpenseMode } from "../../interfaces/ExpenseMode";
+import { format } from "date-fns";
 
 function Expenses() {
   const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<ExpenseMode>(ExpenseMode.MONTHLY);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const { getAll, remove } = useExpense();
   const { showProgress, loading } = useLoading();
@@ -44,6 +47,14 @@ function Expenses() {
     const promise = getAll().then((data) => setExpenses(data));
     showProgress(promise);
   }, [dirty]);
+
+  const expense = expenses
+    .filter((e) => e.type === ExpenseType.EXPENSE)
+    .reduce((p, c) => p + c.amount, 0);
+  const income = expenses
+    .filter((e) => e.type === ExpenseType.INCOME)
+    .reduce((p, c) => p + c.amount, 0);
+  const net = income - expense;
 
   const reload = () => setDirty((d) => !d);
 
@@ -65,14 +76,28 @@ function Expenses() {
             {new Date().toDateString()}
           </Typography>
           <Stack gap={1} direction="row" alignItems="center" flexWrap={"wrap"}>
-            <ButtonGroup>
-              <Button>Daily</Button>
-              <Button>Weekly</Button>
-              <Button>Monthly</Button>
-            </ButtonGroup>
+            <ToggleButtonGroup
+              color="primary"
+              value={mode}
+              onChange={(_, v) => setMode(v as ExpenseMode)}
+            >
+              <Button value={ExpenseMode.DAILY}>Daily</Button>
+              <Button value={ExpenseMode.WEEKLY}>Weekly</Button>
+              <Button value={ExpenseMode.MONTHLY}>Monthly</Button>
+            </ToggleButtonGroup>
             <Button
               startDecorator={<PlusIcon height={20} />}
-              onClick={() => setOpen(true)}
+              onClick={() => {
+                setOpen(true);
+                setSelectedExpense({
+                  id: "",
+                  amount: 0,
+                  description: "",
+                  date: new Date().toISOString(),
+                  type: ExpenseType.EXPENSE,
+                  account: {} as Account,
+                });
+              }}
             >
               Add a Expense
             </Button>
@@ -93,10 +118,7 @@ function Expenses() {
             Income
           </Typography>
           <Typography level="h2">
-            $
-            {expenses
-              .filter((e) => e.type === ExpenseType.INCOME)
-              .reduce((p, c) => p + c.amount, 0)}
+            {income < 0 ? "-" : ""}${Math.abs(income)}
           </Typography>
         </Card>
       </Grid>
@@ -106,10 +128,7 @@ function Expenses() {
             Expenses
           </Typography>
           <Typography level="h2">
-            $
-            {expenses
-              .filter((e) => e.type === ExpenseType.EXPENSE)
-              .reduce((p, c) => p + c.amount, 0)}
+            {expense < 0 ? "-" : ""}${Math.abs(expense)}
           </Typography>
         </Card>
       </Grid>
@@ -119,12 +138,7 @@ function Expenses() {
             Total
           </Typography>
           <Typography level="h2">
-            $
-            {expenses.reduce(
-              (p, c) =>
-                p + (c.type === ExpenseType.EXPENSE ? -1 : 1) * c.amount,
-              0
-            )}
+            {net < 0 ? "-" : ""}${Math.abs(net)}
           </Typography>
         </Card>
       </Grid>
@@ -133,68 +147,81 @@ function Expenses() {
           <CircularProgress />
         </Grid>
       )}
-      <Grid xs={12}>
-        <List
-          variant="outlined"
-          sx={{ borderRadius: "md", overflow: "hidden" }}
-        >
-          {expenses.map((e) => {
-            const isExpense = e.type === ExpenseType.EXPENSE;
-            return (
-              <>
-                <ListItem
-                  endAction={
-                    <Stack direction="row" gap={1}>
-                      <IconButton
-                        onClick={() => {
-                          setOpen(true)
-                          setSelectedExpense(e);
-                        }}
-                      >
-                        <PencilIcon height={20} />
-                      </IconButton>
-                      <ConfirmDialog
-                        confirm="Are you sure you want to delete this expense?"
-                        onConfirm={async () => remove(e.id)}
-                        confirmTitle="Delete"
-                      >
-                        {(setOpen) => (
+      <Grid xs={12} rowGap={1}>
+        {Object.entries(
+          expenses.reduce((p, c) => {
+            const date = c.date.split('T')[0]
+            p[date] = [...(p[date] || []), c];
+            return p;
+          }, {} as { [date: string]: Expense[] })
+        ).map(([date, expenseList]) => (
+          <>
+            <Typography color="neutral" level="title-md">{format(new Date(date), 'do MMMM')}</Typography>
+            <List
+              variant="outlined"
+              sx={{ borderRadius: "md", overflow: "hidden", marginBottom: 2}}
+            >
+              {expenseList.map((e, index) => {
+                const isExpense = e.type === ExpenseType.EXPENSE;
+                return (
+                  <>
+                    <ListItem
+                      endAction={
+                        <Stack direction="row" gap={1}>
                           <IconButton
-                            color="danger"
-                            onClick={() => setOpen(true)}
+                            onClick={() => {
+                              setOpen(true);
+                              setSelectedExpense(e);
+                            }}
                           >
-                            <TrashIcon height={20} />
+                            <PencilIcon height={20} />
                           </IconButton>
-                        )}
-                      </ConfirmDialog>
-                    </Stack>
-                  }
-                >
-                  <ListItemDecorator>
-                    <Avatar
-                      size="sm"
-                      src={
-                        isExpense
-                          ? e.category?.emoji
-                          : "https://cdn.jsdelivr.net/npm/emoji-datasource-google/img/google/64/1f4b5.png"
+                          <ConfirmDialog
+                            confirm="Are you sure you want to delete this expense?"
+                            onConfirm={async () =>
+                              remove(e.id).then(() => reload())
+                            }
+                            confirmTitle="Delete"
+                          >
+                            {(setOpen) => (
+                              <IconButton
+                                color="danger"
+                                onClick={() => setOpen(true)}
+                              >
+                                <TrashIcon height={20} />
+                              </IconButton>
+                            )}
+                          </ConfirmDialog>
+                        </Stack>
                       }
-                    ></Avatar>
-                  </ListItemDecorator>
-                  <Typography level="title-lg">
-                    {isExpense ? e.category?.name : e.account.name}
-                  </Typography>
-                  <Typography
-                    color={isExpense ? "danger" : "success"}
-                    level="title-lg"
-                  >
-                    {isExpense ? "-" : "+"}${e.amount}
-                  </Typography>
-                </ListItem>
-                <ListDivider />
-              </>
-            );
-          })}
-        </List>
+                    >
+                      <ListItemDecorator>
+                        <Avatar
+                          size="sm"
+                          src={
+                            isExpense
+                              ? e.category?.emoji
+                              : "https://cdn.jsdelivr.net/npm/emoji-datasource-google/img/google/64/1f4b5.png"
+                          }
+                        ></Avatar>
+                      </ListItemDecorator>
+                      <Typography level="title-lg">
+                        {isExpense ? e.category?.name : e.account?.name}
+                      </Typography>
+                      <Typography
+                        color={isExpense ? "danger" : "success"}
+                        level="title-lg"
+                      >
+                        {isExpense ? "-" : "+"}${e.amount}
+                      </Typography>
+                    </ListItem>
+                    {expenseList.length !== index + 1 && <ListDivider/>}
+                  </>
+                );
+              })}
+            </List>
+          </>
+        ))}
       </Grid>
     </Grid>
   );
