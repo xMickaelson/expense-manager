@@ -9,6 +9,7 @@ import {
   List,
   ListDivider,
   ListItem,
+  ListItemContent,
   ListItemDecorator,
   Stack,
   ToggleButtonGroup,
@@ -150,78 +151,88 @@ function Expenses() {
       <Grid xs={12} rowGap={1}>
         {Object.entries(
           expenses.reduce((p, c) => {
-            const date = c.date.split('T')[0]
+            const date = c.date.split("T")[0];
             p[date] = [...(p[date] || []), c];
             return p;
           }, {} as { [date: string]: Expense[] })
-        ).map(([date, expenseList]) => (
-          <>
-            <Typography color="neutral" level="title-md">{format(new Date(date), 'do MMMM')}</Typography>
-            <List
-              variant="outlined"
-              sx={{ borderRadius: "md", overflow: "hidden", marginBottom: 2}}
-            >
-              {expenseList.map((e, index) => {
-                const isExpense = e.type === ExpenseType.EXPENSE;
-                return (
-                  <>
-                    <ListItem
-                      endAction={
-                        <Stack direction="row" gap={1}>
-                          <IconButton
-                            onClick={() => {
-                              setOpen(true);
-                              setSelectedExpense(e);
-                            }}
-                          >
-                            <PencilIcon height={20} />
-                          </IconButton>
-                          <ConfirmDialog
-                            confirm="Are you sure you want to delete this expense?"
-                            onConfirm={async () =>
-                              remove(e.id).then(() => reload())
-                            }
-                            confirmTitle="Delete"
-                          >
-                            {(setOpen) => (
-                              <IconButton
-                                color="danger"
-                                onClick={() => setOpen(true)}
-                              >
-                                <TrashIcon height={20} />
-                              </IconButton>
-                            )}
-                          </ConfirmDialog>
-                        </Stack>
-                      }
-                    >
-                      <ListItemDecorator>
-                        <Avatar
-                          size="sm"
-                          src={
-                            isExpense
-                              ? e.category?.emoji
-                              : "https://cdn.jsdelivr.net/npm/emoji-datasource-google/img/google/64/1f4b5.png"
-                          }
-                        ></Avatar>
-                      </ListItemDecorator>
-                      <Typography level="title-lg">
-                        {isExpense ? e.category?.name : e.account?.name}
-                      </Typography>
-                      <Typography
-                        color={isExpense ? "danger" : "success"}
-                        level="title-lg"
+        )
+          .sort((a, b) => (new Date(a[0]) < new Date(b[0]) ? 1 : -1))
+          .map(([date, expenseList]) => (
+            <>
+              <Typography color="neutral" level="title-md">
+                {format(new Date(date), "do MMMM")}
+              </Typography>
+              <List
+                variant="outlined"
+                sx={{ borderRadius: "md", overflow: "hidden", marginBottom: 2 }}
+              >
+                {expenseList.map((e, index) => {
+                  const isExpense = e.type === ExpenseType.EXPENSE;
+                  return (
+                    <>
+                      <ListItem
+                        endAction={
+                          <Stack direction="row" gap={1}>
+                            <IconButton
+                              onClick={() => {
+                                setOpen(true);
+                                setSelectedExpense(e);
+                              }}
+                            >
+                              <PencilIcon height={20} />
+                            </IconButton>
+                            <ConfirmDialog
+                              confirm="Are you sure you want to delete this expense?"
+                              onConfirm={async () =>
+                                remove(e.id).then(() => reload())
+                              }
+                              confirmTitle="Delete"
+                            >
+                              {(setOpen) => (
+                                <IconButton
+                                  color="danger"
+                                  onClick={() => setOpen(true)}
+                                >
+                                  <TrashIcon height={20} />
+                                </IconButton>
+                              )}
+                            </ConfirmDialog>
+                          </Stack>
+                        }
                       >
-                        {isExpense ? "-" : "+"}${e.amount}
-                      </Typography>
-                    </ListItem>
-                    {expenseList.length !== index + 1 && <ListDivider/>}
-                  </>
-                );
-              })}
-            </List>
-          </>
-        ))}
+                        <ListItemDecorator>
+                          <Avatar
+                            size="sm"
+                            src={
+                              isExpense
+                                ? e.category?.emoji
+                                : "https://cdn.jsdelivr.net/npm/emoji-datasource-google/img/google/64/1f4b5.png"
+                            }
+                          ></Avatar>
+                        </ListItemDecorator>
+                        <ListItemContent>
+                          <Typography level="title-lg">
+                            {isExpense ? e.category?.name : e.account?.name}
+                            {" "}
+                            <Typography
+                              color={isExpense ? "danger" : "success"}
+                              level="title-lg"
+                            >
+                              {isExpense ? "-" : "+"}${e.amount}
+                            </Typography>
+                          </Typography>
+                          <Typography level="body-sm">
+                            {e.description}
+                          </Typography>
+                        </ListItemContent>
+                      </ListItem>
+                      {expenseList.length !== index + 1 && <ListDivider />}
+                    </>
+                  );
+                })}
+              </List>
+            </>
+          ))}
       </Grid>
     </Grid>
   );
