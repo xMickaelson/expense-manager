@@ -13,6 +13,7 @@ import { Category } from "../../interfaces/Category";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
 import { useExpense } from "../../hooks/useExpense";
 import { Expense } from "../../interfaces/Expense";
+import { ExpenseType } from "../../interfaces/ExpenseType";
 
 function Analysis() {
   const budget = useBudget();
@@ -30,12 +31,14 @@ function Analysis() {
 
   const totalBudget = budgets.reduce((p, c) => p + (c.budget?.limit ?? 0), 0);
 
-  const expenseTable = Object.entries(expenses.reduce((p, c) => {
-                    const date = c.date.split("T")[0];
-                    p[date] = [...(p[date] || []), c];
-                    return p;
-                  }, {} as { [date: string]: Expense[] }))
-  
+  const expenseTable = Object.entries(
+    expenses.reduce((p, c) => {
+      const date = c.date.split("T")[0];
+      p[date] = [...(p[date] || []), c];
+      return p;
+    }, {} as { [date: string]: Expense[] })
+  );
+
   const increaseMonth = () => setMonth(Math.min(month + 1, 11));
   const decreaseMonth = () => setMonth(Math.max(month - 1, 0));
 
@@ -92,15 +95,41 @@ function Analysis() {
         <Card>
           <CardContent>
             <Typography level="title-lg">Expense Tracking</Typography>
-            {expenseTable.length > 0 && <LineChart
-              xAxis={[{ data: expenseTable.map(e => new Date(e[0])), scaleType: "utc" }]}
-              series={[
-                {
-                  data: expenseTable.map(e => e[1].reduce((p, c) => p + c.amount, 0)),
-                },
-              ]}
-              height={400}
-            />}
+            {expenseTable.length > 0 && (
+              <LineChart
+                xAxis={[
+                  {
+                    data: expenseTable.map((e) => new Date(e[0])),
+                    scaleType: "utc",
+                  },
+                ]}
+                series={[
+                  {
+                    color: "red",
+                    label: "expense",
+                    data: expenseTable.map((e) =>
+                      e[1].reduce(
+                        (p, c) =>
+                          p + (c.type === ExpenseType.EXPENSE ? c.amount : 0),
+                        0
+                      )
+                    ),
+                  },
+                  {
+                    color: "green",
+                    label: "income",
+                    data: expenseTable.map((e) =>
+                      e[1].reduce(
+                        (p, c) =>
+                          p + (c.type === ExpenseType.INCOME? c.amount : 0),
+                        0
+                      )
+                    ),
+                  },
+                ]}
+                height={400}
+              />
+            )}
           </CardContent>
         </Card>
       </Grid>
