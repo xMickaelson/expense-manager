@@ -18,16 +18,18 @@ function Home() {
         </AppHeader.Left>
         <AppHeader.Right>
           <Stack direction="row">
-            <NavLink to="/login">
-              {NoUser && <Button variant="plain">Login / Sign Up</Button>}
-              {!NoUser && (
-                <Avatar
-                  src={`data:image/svg+xml;utf8,${encodeURIComponent(
-                    jdenticon.toSvg(user.name, 100)
-                  )}`}
-                />
-              )}
-            </NavLink>
+            {NoUser && (
+              <NavLink to="/login">
+                <Button variant="plain">Login / Sign Up</Button>
+              </NavLink>
+            )}
+            {!NoUser && (
+              <Avatar
+                src={`data:image/svg+xml;utf8,${encodeURIComponent(
+                  jdenticon.toSvg(user.name, 100)
+                )}`}
+              />
+            )}
           </Stack>
         </AppHeader.Right>
       </AppHeader>
